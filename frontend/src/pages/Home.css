@@ -1,0 +1,53 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: rgb(119, 116, 116); /* light professional background */
+  font-family: "Arial", sans-serif;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #ffd700;
+  margin-bottom: 30px;
+}
+
+.name-input {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  margin-bottom: 20px;
+  width: 250px;
+  text-align: center;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ffd700;
+  color: black;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #ffd700;
+}
+
+.btn.secondary {
+  background-color: #ffd700;
+}
+
+.btn.secondary:hover {
+  background-color: #ffd700;
+}
