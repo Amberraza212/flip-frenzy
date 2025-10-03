@@ -1,0 +1,63 @@
+/* Background full grey */
+.game-container {
+  background: rgb(119, 116, 116);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  color: white;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #FFD700;
+  text-shadow: 2px 2px 6px black;
+}
+
+.game-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.yellow-btn {
+  background: #FFD700;
+  color: black;
+}
+
+.yellow-btn:hover {
+  background: #e6c200;
+}
+
+.grey-btn {
+  background: #333;
+  color: #FFD700;
+}
+
+.grey-btn:hover {
+  background: #555;
+}
+
+.score-text {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 150px);
+  gap: 15px;
+  justify-content: center;
+}
