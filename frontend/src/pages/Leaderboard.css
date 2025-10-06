@@ -1,91 +1,99 @@
-.leaderboard-container {
-  background: rgb(119, 116, 116);
+/* ---------- LEADERBOARD PAGE CSS ---------- */
+
+body {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
-  padding: 30px;
-  color: white;
+  background-color: rgb(119, 116, 116); /* Grey background for all pages */
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.leaderboard-container {
+  max-width: 900px;
+  width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #d9d9d9; /* light grey card background */
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: #1e1e2f; /* dark text for contrast */
   text-align: center;
 }
 
-.leaderboard-title {
+/* Heading */
+.leaderboard-container h1 {
   font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #FFD700;
-  text-shadow: 2px 2px 6px black;
+  margin-bottom: 1rem;
+  color: #ffd700; /* Gold heading */
+  text-shadow: 1px 1px 3px #555;
 }
 
-.current-score-box {
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid #FFD700;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 25px;
-}
-
-.current-score-box h2 {
-  margin-bottom: 10px;
-  color: #FFD700;
-}
-
+/* Leaderboard Table */
 .leaderboard-table {
-  width: 80%;
-  margin: 0 auto 25px auto;
+  width: 100%;
   border-collapse: collapse;
-  background: #2e2e2e;
-  border-radius: 10px;
+  margin: 1.5rem 0;
+  background-color: #f0f0f0; /* light grey rows */
+  border-radius: 0.8rem;
   overflow: hidden;
 }
 
 .leaderboard-table th,
 .leaderboard-table td {
-  padding: 12px;
-  border: 1px solid #444;
+  padding: 1rem;
+  text-align: center;
 }
 
-.leaderboard-table th {
-  background: #FFD700;
-  color: black;
+.leaderboard-table thead {
+  background-color: #ffd700; /* Gold header */
+  color: #1e1e2f;
+}
+
+.leaderboard-table tbody tr {
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: default;
+}
+
+.leaderboard-table tbody tr:nth-child(even) {
+  background-color: #e6e6e6; /* alternating light grey */
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: #ffd700;
+  color: #1e1e2f;
+  transform: scale(1.02);
+}
+
+/* Back Button */
+.back-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
   font-weight: bold;
-}
-
-.leaderboard-table tr:nth-child(even) {
-  background: #3a3a3a;
-}
-
-.leaderboard-table tr:nth-child(odd) {
-  background: #2e2e2e;
-}
-
-.leaderboard-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.btn {
-  padding: 10px 18px;
+  color: #1e1e2f;
+  background-color: #ffd700;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
+  border-radius: 0.6rem;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: all 0.3s;
 }
 
-.yellow-btn {
-  background: #FFD700;
-  color: black;
+.back-btn:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
 }
 
-.yellow-btn:hover {
-  background: #e6c200;
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .leaderboard-table th, .leaderboard-table td {
+    padding: 0.8rem;
+  }
 }
 
-.grey-btn {
-  background: #333;
-  color: #FFD700;
-}
-
-.grey-btn:hover {
-  background: #555;
+@media (max-width: 480px) {
+  .leaderboard-table {
+    font-size: 0.9rem;
+  }
 }

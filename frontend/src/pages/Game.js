@@ -1,6 +1,6 @@
-// src/pages/Game.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import Card from "../components/Card";
 import "./Game.css";
 
@@ -25,6 +25,8 @@ export default function Game() {
   const [disabled, setDisabled] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
+
   // Shuffle cards
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
@@ -37,22 +39,18 @@ export default function Game() {
     setGameOver(false);
   };
 
-  // Handle choice
+  // Handle card choice
   const handleChoice = (card) => {
-    if (!disabled) {
-      choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
-    }
+    if (!disabled) choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
-  // Compare cards
+  // Compare two selected cards
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
       if (choiceOne.src === choiceTwo.src) {
         setCards((prev) =>
-          prev.map((c) =>
-            c.src === choiceOne.src ? { ...c, matched: true } : c
-          )
+          prev.map((c) => (c.src === choiceOne.src ? { ...c, matched: true } : c))
         );
         resetTurn();
       } else {
@@ -68,24 +66,27 @@ export default function Game() {
     setDisabled(false);
   };
 
-  // Check game over
-  useEffect(() => {
-    if (cards.length && cards.every((c) => c.matched)) {
-      setGameOver(true);
-
-      // ✅ Backend pe score save karo
-      fetch("http://localhost:5000/api/scores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: playerName,
-          score: turns, // backend me "score" field expect hoti hai
-        }),
-      }).catch((err) => console.error("Error saving score:", err));
+  // Save result when game over
+  const saveResult = useCallback(async () => {
+    try {
+      if (cards.length && cards.every((c) => c.matched)) {
+        setGameOver(true);
+        const resultData = { name: playerName, turns };
+        await axios.post(`${BASE_URL}/api/leaderboard`, resultData);
+      }
+    } catch (err) {
+      console.error("❌ Error saving result:", err.response?.data || err.message);
     }
-  }, [cards, playerName, turns]);
+  }, [cards, playerName, turns, BASE_URL]);
 
-  useEffect(() => shuffleCards(), []);
+  useEffect(() => {
+    saveResult();
+  }, [saveResult]);
+
+  // Start game on mount
+  useEffect(() => {
+    shuffleCards();
+  }, []);
 
   return (
     <div className="game-container">
@@ -94,10 +95,10 @@ export default function Game() {
         <p>Player: {playerName}</p>
         <p>Turns: {turns}</p>
         <div className="game-buttons">
-          <button onClick={shuffleCards} className="btn">
+          <button className="btn" onClick={shuffleCards}>
             New Game
           </button>
-          <button onClick={() => navigate("/")} className="btn exit-btn">
+          <button className="btn exit-btn" onClick={() => navigate("/")}>
             Exit Game
           </button>
         </div>
@@ -109,11 +110,7 @@ export default function Game() {
             key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={
-              card.matched ||
-              card.id === choiceOne?.id ||
-              card.id === choiceTwo?.id
-            }
+            flipped={card.matched || card.id === choiceOne?.id || card.id === choiceTwo?.id}
             disabled={disabled}
           />
         ))}
@@ -123,10 +120,7 @@ export default function Game() {
         <div className="game-over">
           <h2>🎉 Congratulations {playerName}!</h2>
           <p>You finished in {turns} turns.</p>
-          <button
-            className="btn"
-            onClick={() => navigate("/leaderboard")}
-          >
+          <button className="btn" onClick={() => navigate("/leaderboard")}>
             View Leaderboard
           </button>
         </div>

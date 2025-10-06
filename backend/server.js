@@ -1,36 +1,39 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
+import resultsRoute from "./routes/results.js";
+
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5004;
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://Gameuser:Amberraza@game.n4fk34b.mongodb.net/Game?retryWrites=true&w=majority&appName=Game";
 
-// Middleware
+// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Temporary in-memory scores array
-let scores = [];
+// ✅ Routes
+app.use("/api/leaderboard", resultsRoute);
 
-// ✅ POST /api/scores → add new score
-app.post("/api/scores", (req, res) => {
-  const { name, score } = req.body;
-
-  if (!name || typeof score !== "number") {
-    return res.status(400).json({ error: "Invalid data" });
-  }
-
-  const newScore = { id: Date.now().toString(), name, score };
-  scores.push(newScore);
-
-  res.status(201).json(newScore);
+// ✅ Root test route
+app.get("/", (req, res) => {
+  res.send("🏁 Game Leaderboard API is running!");
 });
 
-// ✅ GET /api/scores → fetch all scores
-app.get("/api/scores", (req, res) => {
-  res.json(scores);
-});
+// ✅ MongoDB connection
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Start server
+// ✅ Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Backend running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
