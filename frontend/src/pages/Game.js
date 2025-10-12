@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Card from "../components/Card";
@@ -25,9 +25,11 @@ export default function Game() {
   const [disabled, setDisabled] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
+  // ✅ Backend URL
+  const BASE_URL =
+    process.env.REACT_APP_BACKEND_URL || "https://game-lemon-kappa-99.vercel.app";
 
-  // Shuffle cards
+  // 🎴 Shuffle cards
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -39,12 +41,12 @@ export default function Game() {
     setGameOver(false);
   };
 
-  // Handle card choice
+  // 🎯 Handle card choice
   const handleChoice = (card) => {
     if (!disabled) choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
-  // Compare two selected cards
+  // 🔄 Compare two selected cards
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
@@ -66,24 +68,30 @@ export default function Game() {
     setDisabled(false);
   };
 
-  // Save result when game over
-  const saveResult = useCallback(async () => {
-    try {
-      if (cards.length && cards.every((c) => c.matched)) {
-        setGameOver(true);
+  // ✅ Game complete check
+  useEffect(() => {
+    if (cards.length && cards.every((c) => c.matched)) {
+      setGameOver(true);
+    }
+  }, [cards]);
+
+  // ✅ Save result when gameOver becomes true
+  useEffect(() => {
+    const saveResult = async () => {
+      if (!gameOver) return;
+      try {
         const resultData = { name: playerName, turns };
         await axios.post(`${BASE_URL}/api/leaderboard`, resultData);
+        console.log("✅ Result saved:", resultData);
+      } catch (err) {
+        console.error("❌ Error saving result:", err.response?.data || err.message);
       }
-    } catch (err) {
-      console.error("❌ Error saving result:", err.response?.data || err.message);
-    }
-  }, [cards, playerName, turns, BASE_URL]);
+    };
 
-  useEffect(() => {
     saveResult();
-  }, [saveResult]);
+  }, [gameOver, playerName, turns, BASE_URL]);
 
-  // Start game on mount
+  // 🎮 Start game on mount
   useEffect(() => {
     shuffleCards();
   }, []);
@@ -110,7 +118,11 @@ export default function Game() {
             key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={card.matched || card.id === choiceOne?.id || card.id === choiceTwo?.id}
+            flipped={
+              card.matched ||
+              card.id === choiceOne?.id ||
+              card.id === choiceTwo?.id
+            }
             disabled={disabled}
           />
         ))}

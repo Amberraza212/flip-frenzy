@@ -1,58 +1,50 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import "./Leaderboard.css";
 
 const Leaderboard = () => {
-  const [scores, setScores] = useState([]);
-  const navigate = useNavigate();
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
+  const [leaderboard, setLeaderboard] = useState([]);
 
-  // ✅ Memoized fetchLeaderboard to avoid ESLint warning
-  const fetchLeaderboard = useCallback(async () => {
+  const fetchLeaderboard = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/leaderboard`);
-      if (!res.ok) throw new Error("Failed to fetch leaderboard");
-      const data = await res.json();
-      setScores(data);
+      const response = await fetch(
+        "https://game-lemon-kappa-99.vercel.app/api/leaderboard?limit=50"
+      );
+      const data = await response.json();
+      setLeaderboard(data);
     } catch (error) {
-      console.error("❌ Error fetching leaderboard:", error);
+      console.error("Error fetching leaderboard:", error);
     }
-  }, [BASE_URL]);
+  };
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [fetchLeaderboard]);
+  }, []);
 
   return (
     <div className="leaderboard-container">
       <h1>🏆 Leaderboard</h1>
-
-      {scores.length === 0 ? (
-        <p>No results yet. Play the game to see your score!</p>
-      ) : (
+      {leaderboard.length > 0 ? (
         <table className="leaderboard-table">
           <thead>
             <tr>
               <th>Rank</th>
-              <th>Player</th>
-              <th>Turns</th>
+              <th>Player Name</th>
+              <th>Score</th>
             </tr>
           </thead>
           <tbody>
-            {scores.map((score, index) => (
-              <tr key={score._id}>
+            {leaderboard.map((player, index) => (
+              <tr key={player._id}>
                 <td>{index + 1}</td>
-                <td>{score.name}</td>
-                <td>{score.turns}</td>
+                <td>{player.name}</td>
+                <td>{player.score}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      ) : (
+        <p>No results found.</p>
       )}
-
-      <button className="back-btn" onClick={() => navigate("/")}>
-        ⬅ Back to Home
-      </button>
     </div>
   );
 };

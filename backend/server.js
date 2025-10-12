@@ -8,18 +8,27 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5004;
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  "mongodb+srv://Gameuser:Amberraza@game.n4fk34b.mongodb.net/Game?retryWrites=true&w=majority&appName=Game";
+const MONGO_URI = process.env.MONGO_URI;
+
+// ✅ Proper CORS setup
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://game-frontend-hazel.vercel.app", // your frontend on vercel
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // ✅ Middlewares
-app.use(cors());
 app.use(express.json());
 
 // ✅ Routes
 app.use("/api/leaderboard", resultsRoute);
 
-// ✅ Root test route
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("🏁 Game Leaderboard API is running!");
 });

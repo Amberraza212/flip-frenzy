@@ -97,3 +97,20 @@ body {
     font-size: 0.9rem;
   }
 }
+.back-home-btn {
+  margin-top: 1.5rem;
+  background: #ffcc00;
+  color: #1a1a1a;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.back-home-btn:hover {
+  background: #ffdb4d;
+  transform: scale(1.05);
+}
