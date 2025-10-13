@@ -1,65 +1,116 @@
-.leaderboard-container {
-  text-align: center;
-  margin: 0 auto;
-  padding: 40px 20px;
+/* ---------- LEADERBOARD PAGE CSS ---------- */
+
+body {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
-  background: rgb(119, 116, 116); /* light professional background */
+  background-color: rgb(119, 116, 116); /* Grey background for all pages */
   font-family: "Arial", sans-serif;
-  color: #fff;
+  display: flex;
+  justify-content: center;
 }
 
+.leaderboard-container {
+  max-width: 900px;
+  width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #d9d9d9; /* light grey card background */
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: #1e1e2f; /* dark text for contrast */
+  text-align: center;
+}
+
+/* Heading */
 .leaderboard-container h1 {
   font-size: 2.5rem;
-  color: #ffd700; /* gold */
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
+  color: #ffd700; /* Gold heading */
+  text-shadow: 1px 1px 3px #555;
 }
 
+/* Leaderboard Table */
 .leaderboard-table {
-  margin: 0 auto;
+  width: 100%;
   border-collapse: collapse;
-  width: 80%;
-  max-width: 600px;
-  background: #444;
-  border-radius: 10px;
+  margin: 1.5rem 0;
+  background-color: #f0f0f0; /* light grey rows */
+  border-radius: 0.8rem;
   overflow: hidden;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
 .leaderboard-table th,
 .leaderboard-table td {
-  padding: 12px 18px;
-  border-bottom: 1px solid #555;
+  padding: 1rem;
   text-align: center;
 }
 
-.leaderboard-table th {
-  background: #333;
-  color: #ffd700;
-  font-size: 1.1rem;
+.leaderboard-table thead {
+  background-color: #ffd700; /* Gold header */
+  color: #1e1e2f;
 }
 
-.leaderboard-table tr:nth-child(even) {
-  background: #3a3a3a;
+.leaderboard-table tbody tr {
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: default;
 }
 
-.leaderboard-table tr:hover {
-  background: #505050;
+.leaderboard-table tbody tr:nth-child(even) {
+  background-color: #e6e6e6; /* alternating light grey */
 }
 
-.btn {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.leaderboard-table tbody tr:hover {
   background-color: #ffd700;
-  color: black;
-  transition: all 0.3s ease;
-  margin-top: 20px;
+  color: #1e1e2f;
+  transform: scale(1.02);
 }
 
-.btn:hover {
-  background-color: #e6c200; /* darker gold */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+/* Back Button */
+.back-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #1e1e2f;
+  background-color: #ffd700;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .leaderboard-table th, .leaderboard-table td {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-table {
+    font-size: 0.9rem;
+  }
+}
+.back-home-btn {
+  margin-top: 1.5rem;
+  background: #ffcc00;
+  color: #1a1a1a;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.back-home-btn:hover {
+  background: #ffdb4d;
+  transform: scale(1.05);
 }

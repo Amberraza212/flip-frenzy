@@ -4,9 +4,6 @@ import axios from "axios";
 import Card from "../components/Card";
 import "./Game.css";
 
-// ✅ Your deployed backend URL
-const BACKEND_URL = "https://game-backend-git-main-ambers-projects-2d8614a1.vercel.app";
-
 const cardImages = [
   { src: process.env.PUBLIC_URL + "/img/helmet.png", matched: false },
   { src: process.env.PUBLIC_URL + "/img/potion.png", matched: false },
@@ -28,6 +25,11 @@ export default function Game() {
   const [disabled, setDisabled] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  // ✅ Backend URL
+  const BASE_URL =
+    process.env.REACT_APP_BACKEND_URL || "https://game-lemon-kappa-99.vercel.app";
+
+  // 🎴 Shuffle cards
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -39,10 +41,12 @@ export default function Game() {
     setGameOver(false);
   };
 
+  // 🎯 Handle card choice
   const handleChoice = (card) => {
     if (!disabled) choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
+  // 🔄 Compare two selected cards
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
@@ -64,26 +68,33 @@ export default function Game() {
     setDisabled(false);
   };
 
-  // ✅ Save score when game finishes
+  // ✅ Game complete check
   useEffect(() => {
     if (cards.length && cards.every((c) => c.matched)) {
       setGameOver(true);
-
-      const scoreData = {
-        name: playerName || "Player",
-        turns: Number(turns),
-      };
-
-      axios
-        .post(`${BACKEND_URL}/api/scores`, scoreData)
-        .then(() => console.log("Score saved ✅"))
-        .catch((err) =>
-          console.error("Error saving score:", err.response?.data || err.message)
-        );
     }
-  }, [cards, playerName, turns]);
+  }, [cards]);
 
-  useEffect(() => shuffleCards(), []);
+  // ✅ Save result when gameOver becomes true
+  useEffect(() => {
+    const saveResult = async () => {
+      if (!gameOver) return;
+      try {
+        const resultData = { name: playerName, turns };
+        await axios.post(`${BASE_URL}/api/leaderboard`, resultData);
+        console.log("✅ Result saved:", resultData);
+      } catch (err) {
+        console.error("❌ Error saving result:", err.response?.data || err.message);
+      }
+    };
+
+    saveResult();
+  }, [gameOver, playerName, turns, BASE_URL]);
+
+  // 🎮 Start game on mount
+  useEffect(() => {
+    shuffleCards();
+  }, []);
 
   return (
     <div className="game-container">
@@ -92,8 +103,12 @@ export default function Game() {
         <p>Player: {playerName}</p>
         <p>Turns: {turns}</p>
         <div className="game-buttons">
-          <button onClick={shuffleCards} className="btn">New Game</button>
-          <button onClick={() => navigate("/")} className="btn exit-btn">Exit Game</button>
+          <button className="btn" onClick={shuffleCards}>
+            New Game
+          </button>
+          <button className="btn exit-btn" onClick={() => navigate("/")}>
+            Exit Game
+          </button>
         </div>
       </div>
 
@@ -103,7 +118,11 @@ export default function Game() {
             key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={card.matched || card.id === choiceOne?.id || card.id === choiceTwo?.id}
+            flipped={
+              card.matched ||
+              card.id === choiceOne?.id ||
+              card.id === choiceTwo?.id
+            }
             disabled={disabled}
           />
         ))}

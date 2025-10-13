@@ -1,52 +1,68 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
 
-// ✅ Your deployed backend URL
-const BACKEND_URL = "https://game-backend-git-main-ambers-projects-2d8614a1.vercel.app";
-
-export default function Leaderboard() {
-  const [scores, setScores] = useState([]);
+const Leaderboard = () => {
   const navigate = useNavigate();
 
+  // ✅ Use your deployed backend URL here
+  const BASE_URL = "https://game-lemon-kappa-99.vercel.app";
+
+  const [scores, setScores] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    axios
-      .get(`${BACKEND_URL}/api/scores`)
-      .then((res) => setScores(res.data))
-      .catch((err) =>
-        console.error("Error fetching scores:", err.response?.data || err.message)
-      );
-  }, []);
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        // ✅ Corrected endpoint
+        const res = await fetch(`${BASE_URL}/api/results?limit=50`);
+        const data = await res.json();
+        setScores(data.results || []);
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, [BASE_URL]);
 
   return (
     <div className="leaderboard-container">
-      <h1>🏆 Leaderboard</h1>
-      {scores.length === 0 ? (
-        <p>No scores yet. Play a game to get started!</p>
+      <h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : scores.length === 0 ? (
+        <p>No results found.</p>
       ) : (
-        <table>
+        <table className="leaderboard-table">
           <thead>
             <tr>
               <th>Rank</th>
               <th>Player</th>
               <th>Turns</th>
-              <th>Date</th>
             </tr>
           </thead>
           <tbody>
-            {scores.map((s, i) => (
-              <tr key={s._id}>
-                <td>{i + 1}</td>
-                <td>{s.name}</td>
-                <td>{s.turns}</td>
-                <td>{new Date(s.date).toLocaleString()}</td>
+            {scores.map((score, index) => (
+              <tr key={score._id || index}>
+                <td>{index + 1}</td>
+                <td>{score.name}</td>
+                <td>{score.turns}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      <button className="btn" onClick={() => navigate("/")}>Back to Home</button>
+
+      <button className="btn" onClick={() => navigate("/")}>
+        ⬅ Back to Home
+      </button>
     </div>
   );
-}
+};
+
+export default Leaderboard;
