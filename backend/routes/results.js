@@ -25,27 +25,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 📌 Get ALL results with pagination (sorted by lowest turns)
+// 📌 Get ALL results (sorted by lowest turns)
 router.get("/", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // current page
-    const limit = parseInt(req.query.limit) || 50; // now showing up to 50 results per page
-    const skip = (page - 1) * limit;
-
-    const total = await Result.countDocuments();
-    const results = await Result.find()
-      .sort({ turns: 1 })
-      .skip(skip)
-      .limit(limit);
-
-    const totalPages = Math.ceil(total / limit);
-
-    res.json({
-      results,
-      total,
-      page,
-      totalPages,
-    });
+    // ✅ Fetch all results (no pagination)
+    const results = await Result.find().sort({ turns: 1 });
+    res.json(results);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
