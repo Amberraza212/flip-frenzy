@@ -15,7 +15,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://game-frontend-hazel.vercel.app", // your frontend on vercel
+      "https://game-frontend-hazel.vercel.app",
+            "https://game-frontend-git-main-ambers-projects-2d8614a1.vercel.app"
+ // your frontend on vercel
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
