@@ -4,30 +4,39 @@ import "./Leaderboard.css";
 
 const Leaderboard = () => {
   const navigate = useNavigate();
-
-  // ✅ Use your deployed backend URL here
-  const BASE_URL = "https://game-lemon-kappa-99.vercel.app";
+  const BASE_URL = "https://game-lemon-kappa-99.vercel.app"; // ✅ Your deployed backend
 
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        // ✅ Corrected endpoint
-        const res = await fetch(`${BASE_URL}/api/results?limit=50`);
+        setError("");
+
+        // ✅ Correct endpoint for backend
+const res = await fetch(`${BASE_URL}/api/leaderboard`);
+
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+
         const data = await res.json();
-        setScores(data.results || []);
-      } catch (error) {
-        console.error("Error fetching leaderboard:", error);
+        console.log("✅ Leaderboard Data:", data);
+
+        setScores(data.results ?? []);
+      } catch (err) {
+        console.error("❌ Error fetching leaderboard:", err);
+        setError("Failed to load leaderboard data.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchLeaderboard();
-  }, [BASE_URL]);
+  }, []);
 
   return (
     <div className="leaderboard-container">
@@ -35,6 +44,8 @@ const Leaderboard = () => {
 
       {loading ? (
         <p>Loading...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
       ) : scores.length === 0 ? (
         <p>No results found.</p>
       ) : (
