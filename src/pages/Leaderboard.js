@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
 
-const BASE_URL = "https://game-lemon-kappa-99.vercel.app"; // ✅ Your backend deployed URL
-
 const Leaderboard = () => {
+  const navigate = useNavigate();
+  const BASE_URL = "https://game-lemon-kappa-99.vercel.app"; // ✅ Backend URL
+
   const [scores, setScores] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/leaderboard`);
+        setLoading(true);
+        setError("");
+
+        const res = await fetch(`${BASE_URL}/api/leaderboard`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
         if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+          throw new Error(`Server error: ${res.status}`);
         }
+
         const data = await res.json();
-        setScores(data);
+        console.log("✅ Leaderboard Data:", data);
+
+        setScores(data || []);
       } catch (err) {
-        console.error("Error fetching leaderboard:", err);
-        setError("Failed to load leaderboard");
+        console.error("❌ Error fetching leaderboard:", err);
+        setError("Failed to load leaderboard data.");
       } finally {
         setLoading(false);
       }
@@ -28,39 +40,40 @@ const Leaderboard = () => {
     fetchLeaderboard();
   }, []);
 
-  if (loading) return <p>Loading leaderboard...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   return (
     <div className="leaderboard-container">
-      <h1>🏆 Game Leaderboard</h1>
-      {scores.length === 0 ? (
+      <h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : scores.length === 0 ? (
         <p>No results found.</p>
       ) : (
         <table className="leaderboard-table">
           <thead>
             <tr>
               <th>Rank</th>
-              <th>Player Name</th>
+              <th>Player</th>
               <th>Turns</th>
             </tr>
           </thead>
           <tbody>
-            {scores
-              .sort((a, b) => a.turns - b.turns) // sort by turns ascending
-              .map((score, index) => (
-                <tr key={score._id}>
-                  <td>{index + 1}</td>
-                  <td>{score.name}</td> {/* ✅ match with backend field */}
-                  <td>{score.turns}</td>
-                </tr>
-              ))}
+            {scores.map((score, index) => (
+              <tr key={score._id || index}>
+                <td>{index + 1}</td>
+                <td>{score.name}</td>
+                <td>{score.turns}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}
-      <a href="/" className="back-btn">
+
+      <button className="btn" onClick={() => navigate("/")}>
         ⬅ Back to Home
-      </a>
+      </button>
     </div>
   );
 };
