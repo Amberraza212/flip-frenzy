@@ -4,29 +4,32 @@ import "./Leaderboard.css";
 
 const Leaderboard = () => {
   const navigate = useNavigate();
-  const BASE_URL = "https://game-lemon-kappa-99.vercel.app"; // ✅ Backend URL
+
+  // ✅ Backend URL (no trailing slash)
+  const BASE_URL = "https://game-lemon-kappa-99.vercel.app";
 
   const [scores, setScores] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        setLoading(true);
         setError("");
+        console.log("📡 Fetching leaderboard...");
 
-        const res = await fetch(`${BASE_URL}/api/leaderboard`, {
+        const response = await fetch(`${BASE_URL}/api/leaderboard`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
 
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
+        // If not OK, throw an error
+        if (!response.ok) {
+          throw new Error(`Server returned ${response.status}`);
         }
 
-        const data = await res.json();
-        console.log("✅ Leaderboard Data:", data);
+        const data = await response.json();
+        console.log("✅ Leaderboard Data Fetched:", data);
 
         setScores(data || []);
       } catch (err) {
@@ -45,7 +48,7 @@ const Leaderboard = () => {
       <h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
 
       {loading ? (
-        <p>Loading...</p>
+        <p>Loading leaderboard...</p>
       ) : error ? (
         <p style={{ color: "red" }}>{error}</p>
       ) : scores.length === 0 ? (
@@ -60,11 +63,11 @@ const Leaderboard = () => {
             </tr>
           </thead>
           <tbody>
-            {scores.map((score, index) => (
-              <tr key={score._id || index}>
+            {scores.map((player, index) => (
+              <tr key={player._id || index}>
                 <td>{index + 1}</td>
-                <td>{score.name}</td>
-                <td>{score.turns}</td>
+                <td>{player.name}</td>
+                <td>{player.turns}</td>
               </tr>
             ))}
           </tbody>
