@@ -5,7 +5,7 @@ import "./Leaderboard.css";
 const Leaderboard = () => {
   const navigate = useNavigate();
 
-  // ✅ Backend URL (no trailing slash)
+  // ✅ Correct backend API base URL (your backend on Vercel)
   const BASE_URL = "https://game-lemon-kappa-99.vercel.app";
 
   const [scores, setScores] = useState([]);
@@ -16,20 +16,21 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         setError("");
-        console.log("📡 Fetching leaderboard...");
+        console.log("📡 Fetching leaderboard from:", `${BASE_URL}/api/leaderboard`);
 
         const response = await fetch(`${BASE_URL}/api/leaderboard`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
 
-        // If not OK, throw an error
+        // ⚠️ Check for valid response
         if (!response.ok) {
           throw new Error(`Server returned ${response.status}`);
         }
 
+        // 🧾 Parse JSON safely
         const data = await response.json();
-        console.log("✅ Leaderboard Data Fetched:", data);
+        console.log("✅ Leaderboard data fetched successfully:", data);
 
         setScores(data || []);
       } catch (err) {
