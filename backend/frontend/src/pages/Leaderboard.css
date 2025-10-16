@@ -1,0 +1,116 @@
+/* ---------- LEADERBOARD PAGE CSS ---------- */
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: rgb(119, 116, 116); /* Grey background for all pages */
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.leaderboard-container {
+  max-width: 900px;
+  width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #d9d9d9; /* light grey card background */
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: #1e1e2f; /* dark text for contrast */
+  text-align: center;
+}
+
+/* Heading */
+.leaderboard-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #ffd700; /* Gold heading */
+  text-shadow: 1px 1px 3px #555;
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background-color: #f0f0f0; /* light grey rows */
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 1rem;
+  text-align: center;
+}
+
+.leaderboard-table thead {
+  background-color: #ffd700; /* Gold header */
+  color: #1e1e2f;
+}
+
+.leaderboard-table tbody tr {
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: default;
+}
+
+.leaderboard-table tbody tr:nth-child(even) {
+  background-color: #e6e6e6; /* alternating light grey */
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: #ffd700;
+  color: #1e1e2f;
+  transform: scale(1.02);
+}
+
+/* Back Button */
+.back-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #1e1e2f;
+  background-color: #ffd700;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .leaderboard-table th, .leaderboard-table td {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-table {
+    font-size: 0.9rem;
+  }
+}
+.back-home-btn {
+  margin-top: 1.5rem;
+  background: #ffcc00;
+  color: #1a1a1a;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.back-home-btn:hover {
+  background: #ffdb4d;
+  transform: scale(1.05);
+}
