@@ -113,3 +113,40 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+<<<<<<< HEAD:src_backup/pages/Game.css
+.timer {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+}
+.timer.danger {
+  color: red;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.game-over {
+  text-align: center;
+  margin-top: 50px;
+  color: #fff;
+}
+
+.game-over-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.save-btn:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+=======
+>>>>>>> 0b68f6a515a1ad34e312aaa579ff0ca43aab85f6:backend/src_backup/pages/Game.css
