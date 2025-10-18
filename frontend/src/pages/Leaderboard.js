@@ -5,34 +5,25 @@ import "./Leaderboard.css";
 const Leaderboard = () => {
   const navigate = useNavigate();
 
-  // ✅ Correct backend API base URL (your backend on Vercel)
-  const BASE_URL = "https://game-lemon-kappa-99.vercel.app";
+  // ✅ Backend URL (local for now)
+  const BASE_URL = "http://localhost:5004";
 
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         setError("");
-        console.log("📡 Fetching leaderboard from:", `${BASE_URL}/api/leaderboard`);
+        setLoading(true);
 
-        const response = await fetch(`${BASE_URL}/api/leaderboard`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
+        const response = await fetch(`${BASE_URL}/api/leaderboard`);
+        if (!response.ok) throw new Error(`Server returned ${response.status}`);
 
-        // ⚠️ Check for valid response
-        if (!response.ok) {
-          throw new Error(`Server returned ${response.status}`);
-        }
-
-        // 🧾 Parse JSON safely
         const data = await response.json();
-        console.log("✅ Leaderboard data fetched successfully:", data);
-
-        setScores(data || []);
+        setScores(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("❌ Error fetching leaderboard:", err);
         setError("Failed to load leaderboard data.");
@@ -44,15 +35,37 @@ const Leaderboard = () => {
     fetchLeaderboard();
   }, []);
 
+  // 🔍 Filter players by name
+  const filteredScores = scores.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="leaderboard-container">
-      <h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
+      {/* 🟡 Back Button ABOVE the title */}
+      <button className="back-button" onClick={() => navigate("/")}>
+  ⬅ Back to Home
+</button>
+
+
+<h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
+
+      <input
+        type="text"
+        placeholder="Search player by name..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="search-input"
+      />
 
       {loading ? (
-        <p>Loading leaderboard...</p>
+        <div className="loading-screen">
+          <div className="spinner"></div>
+          <p>Loading Leaderboard...</p>
+        </div>
       ) : error ? (
         <p style={{ color: "red" }}>{error}</p>
-      ) : scores.length === 0 ? (
+      ) : filteredScores.length === 0 ? (
         <p>No results found.</p>
       ) : (
         <table className="leaderboard-table">
@@ -61,23 +74,21 @@ const Leaderboard = () => {
               <th>Rank</th>
               <th>Player</th>
               <th>Turns</th>
+              <th>Time Taken (sec)</th>
             </tr>
           </thead>
           <tbody>
-            {scores.map((player, index) => (
+            {filteredScores.map((player, index) => (
               <tr key={player._id || index}>
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
                 <td>{player.turns}</td>
+                <td>{player.time || "—"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-
-      <button className="btn" onClick={() => navigate("/")}>
-        ⬅ Back to Home
-      </button>
     </div>
   );
 };

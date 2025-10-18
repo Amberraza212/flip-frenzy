@@ -97,20 +97,73 @@ body {
     font-size: 0.9rem;
   }
 }
-.back-home-btn {
-  margin-top: 1.5rem;
-  background: #ffcc00;
-  color: #1a1a1a;
+.back-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ffcc00;
+  color: #000;
+  font-weight: bold;
+  padding: 10px 16px;
   border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 0.8rem;
-  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
 }
 
-.back-home-btn:hover {
-  background: #ffdb4d;
+.back-button:hover {
+  background-color: #ffd633;
   transform: scale(1.05);
+}
+
+.search-bar {
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 300px;
+}
+.search-input {
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 300px;
+  outline: none;
+  font-size: 16px;
+}
+.search-input:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 5px rgba(108, 99, 255, 0.4);
+}
+/* ---------- LOADING SPINNER ---------- */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #ffd700; /* gold spinner */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
