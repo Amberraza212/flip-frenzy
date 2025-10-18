@@ -10,26 +10,27 @@ const app = express();
 const PORT = process.env.PORT || 5004;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ✅ Proper CORS setup (allow localhost + your deployed frontend)
+// ✅ Proper CORS setup
 app.use(
   cors({
     origin: [
-      "http://localhost:3000", // local dev frontend
-      "https://game-frontend-hazel.vercel.app", // main frontend domain
-      "https://game-frontend-git-main-ambers-projects-2d8614a1.vercel.app", // branch/preview domain
+      "http://localhost:3000",
+      "https://game-frontend-hazel.vercel.app",
+            "https://game-frontend-git-main-ambers-projects-2d8614a1.vercel.app"
+ // your frontend on vercel
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-// ✅ Middleware
+// ✅ Middlewares
 app.use(express.json());
 
 // ✅ Routes
 app.use("/api/leaderboard", resultsRoute);
 
-// ✅ Test route (for checking deployment)
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("🏁 Game Leaderboard API is running!");
 });
