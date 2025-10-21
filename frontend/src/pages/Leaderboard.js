@@ -5,8 +5,8 @@ import "./Leaderboard.css";
 const Leaderboard = () => {
   const navigate = useNavigate();
 
-  // ✅ Backend URL (local for now)
-  const BASE_URL = "https://flip-frenzy-lime.vercel.app/";
+  // ✅ Use environment variable for backend URL
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,22 +33,19 @@ const Leaderboard = () => {
     };
 
     fetchLeaderboard();
-  }, []);
+  }, [BASE_URL]); // ✅ include BASE_URL as dependency
 
-  // 🔍 Filter players by name
   const filteredScores = scores.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="leaderboard-container">
-      {/* 🟡 Back Button ABOVE the title */}
       <button className="back-button" onClick={() => navigate("/")}>
-  ⬅ Back to Home
-</button>
+        ⬅ Back to Home
+      </button>
 
-
-<h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
+      <h2 className="leaderboard-title">🏆 Game Leaderboard</h2>
 
       <input
         type="text"
@@ -83,7 +80,7 @@ const Leaderboard = () => {
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
                 <td>{player.turns}</td>
-                <td>{player.time || "—"}</td>
+                <td>{player.time !== undefined ? player.time : "—"}</td>
               </tr>
             ))}
           </tbody>

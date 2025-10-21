@@ -33,9 +33,9 @@ export default function Game() {
   const [scoreSaved, setScoreSaved] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "https://flip-frenzy-lime.vercel.app";
+  // ✅ Use environment variable for backend
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-  // shuffle / start game
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -57,7 +57,7 @@ export default function Game() {
       localStorage.setItem("playerName", location.state.playerName);
     }
     shuffleCards();
-  }, []);
+  }, [location.state?.playerName]);
 
   const handleChoice = (card) => {
     if (disabled) return;
@@ -107,9 +107,9 @@ export default function Game() {
       setFinalTime(elapsed);
       setCelebrate(true);
     }
-  }, [cards]);
+  }, [cards, timeLeft]);
 
-  // 🔇 Silent score save (no alert)
+  // 🔇 Silent score save using env variable
   const handleSaveScore = async () => {
     if (scoreSaved) return;
     try {
@@ -128,10 +128,7 @@ export default function Game() {
       <span
         key={i}
         className="confetti"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 30}%`,
-        }}
+        style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 30}%` }}
       />
     ));
   };
@@ -156,22 +153,12 @@ export default function Game() {
         </div>
 
         <div className="header-right">
-          <p className="turns">
-            Turns: <strong>{turns}</strong>
-          </p>
-          <p className={`timer ${timeLeft <= 10 ? "danger" : ""}`}>
-            ⏳ {timeLeft}s
-          </p>
+          <p className="turns">Turns: <strong>{turns}</strong></p>
+          <p className={`timer ${timeLeft <= 10 ? "danger" : ""}`}>⏳ {timeLeft}s</p>
           <div className="controls">
-            <button className="btn small" onClick={shuffleCards}>
-              🔁 Restart
-            </button>
-            <button className="btn small exit" onClick={() => navigate("/")}>
-              🚪 Exit
-            </button>
-            <button className="btn small" onClick={() => navigate("/leaderboard")}>
-              🏆
-            </button>
+            <button className="btn small" onClick={shuffleCards}>🔁 Restart</button>
+            <button className="btn small exit" onClick={() => navigate("/")}>🚪 Exit</button>
+            <button className="btn small" onClick={() => navigate("/leaderboard")}>🏆</button>
           </div>
         </div>
       </div>
@@ -183,11 +170,7 @@ export default function Game() {
               key={card.id}
               card={card}
               handleChoice={handleChoice}
-              flipped={
-                card.matched ||
-                card.id === choiceOne?.id ||
-                card.id === choiceTwo?.id
-              }
+              flipped={card.matched || card.id === choiceOne?.id || card.id === choiceTwo?.id}
               disabled={disabled}
             />
           ))}
@@ -197,32 +180,20 @@ export default function Game() {
           <h2>{cards.every((c) => c.matched) ? "🎉 You Won!" : "⏱ Time's Up"}</h2>
           {cards.every((c) => c.matched) ? (
             <p>
-              Awesome <strong>{playerName}</strong> — finished in{" "}
-              <strong>{turns}</strong> turns and{" "}
-              <strong>{formatTime(finalTime)}</strong>!
+              Awesome <strong>{playerName}</strong> — finished in <strong>{turns}</strong> turns and <strong>{formatTime(finalTime)}</strong>!
             </p>
           ) : (
             <p>
-              Good try, <strong>{playerName}</strong>. Final turns:{" "}
-              <strong>{turns}</strong>. Time used:{" "}
-              <strong>{formatTime(finalTime)}</strong>.
+              Good try, <strong>{playerName}</strong>. Final turns: <strong>{turns}</strong>. Time used: <strong>{formatTime(finalTime)}</strong>.
             </p>
           )}
 
           <div className="game-over-buttons">
-            <button className="btn" onClick={shuffleCards}>
-              🔁 Play Again
-            </button>
-            <button
-              className="btn save-btn"
-              onClick={handleSaveScore}
-              disabled={scoreSaved}
-            >
+            <button className="btn" onClick={shuffleCards}>🔁 Play Again</button>
+            <button className="btn save-btn" onClick={handleSaveScore} disabled={scoreSaved}>
               💾 {scoreSaved ? "Saved!" : "Save Score"}
             </button>
-            <button className="btn" onClick={() => navigate("/leaderboard")}>
-              🏆 Leaderboard
-            </button>
+            <button className="btn" onClick={() => navigate("/leaderboard")}>🏆 Leaderboard</button>
           </div>
         </div>
       )}
