@@ -1,92 +1,120 @@
-/* ---------- HOME PAGE CSS ---------- */
 
 body {
   margin: 0;
   padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
   min-height: 100vh;
-  background-color: rgb(119, 116, 116); /* Full grey background */
-  font-family: "Arial", sans-serif;
   display: flex;
   justify-content: center;
-}
-
-.home-container {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 900px;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
-/* Heading */
-h1 {
+/* Main Container */
+.home-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  padding: 3rem 4rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  color: #fff;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Title */
+.home-container h1 {
   font-size: 3rem;
-  color: #ffd700; /* Gold heading */
-  margin-bottom: 30px;
-  text-align: center;
-  text-shadow: 1px 1px 3px #555;
+  color: #ffd700;
+  text-shadow: 0 0 15px #ffd700, 0 0 30px #ffea00;
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
 }
 
-/* Name Input */
+/* Input */
 .name-input {
-  padding: 10px 15px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #aaa;
-  margin-bottom: 20px;
-  width: 250px;
-  text-align: center;
+  width: 80%;
+  max-width: 320px;
+  padding: 0.9rem 1rem;
+  font-size: 1.1rem;
+  border: 2px solid #ffd700;
+  border-radius: 0.8rem;
   outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-bottom: 1.8rem;
+}
+
+.name-input::placeholder {
+  color: #ddd;
+}
+
+.name-input:focus {
+  border-color: #ffea00;
+  box-shadow: 0 0 10px #ffd700;
 }
 
 /* Buttons */
 .home-buttons {
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .btn {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #ffd700;
-  color: black;
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  color: #000;
   font-weight: bold;
-  transition: all 0.2s ease;
+  padding: 0.9rem 1.8rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
-  background-color: #e6c200; /* Slightly darker gold on hover */
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 0 15px #ffd700;
 }
 
 .btn.secondary {
-  background-color: #ffd700;
+  background: linear-gradient(135deg, #ff4d4d, #ff7070);
+  color: #fff;
 }
 
 .btn.secondary:hover {
-  background-color: #e6c200;
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 0 15px #ff4d4d;
 }
 
-/* Responsive for smaller screens */
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
 @media (max-width: 480px) {
-  h1 {
-    font-size: 2rem;
+  .home-container {
+    width: 90%;
+    padding: 2rem;
   }
-  .name-input {
-    width: 200px;
+
+  .home-container h1 {
+    font-size: 2.2rem;
   }
-  .home-buttons {
-    flex-direction: column;
-    gap: 10px;
+
+  .btn {
+    width: 100%;
   }
 }

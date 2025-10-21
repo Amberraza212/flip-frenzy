@@ -16,7 +16,11 @@ const cardImages = [
 export default function Game() {
   const navigate = useNavigate();
   const location = useLocation();
-  const playerName = location.state?.playerName?.trim() || "Player";
+
+  const playerName =
+    location.state?.playerName?.trim() ||
+    localStorage.getItem("playerName") ||
+    "Player";
 
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
@@ -25,20 +29,17 @@ export default function Game() {
   const [disabled, setDisabled] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [timeLeft, setTimeLeft] = useState(40);
-  const [gameStarted, setGameStarted] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
   const [scoreSaved, setScoreSaved] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
-  const BASE_URL =
-    process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
 
-  // 🎴 Shuffle cards
+  // shuffle / start game
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
-      .map((c) => ({ ...c, id: Math.random() }));
+      .map((c) => ({ ...c, id: Math.random(), matched: false }));
 
     setChoiceOne(null);
     setChoiceTwo(null);
@@ -46,22 +47,32 @@ export default function Game() {
     setTurns(0);
     setGameOver(false);
     setTimeLeft(40);
+    setFinalTime(0);
     setScoreSaved(false);
     setCelebrate(false);
   };
 
-  // 🎯 Handle choice
+  useEffect(() => {
+    if (location.state?.playerName) {
+      localStorage.setItem("playerName", location.state.playerName);
+    }
+    shuffleCards();
+  }, []);
+
   const handleChoice = (card) => {
-    if (!disabled) choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+    if (disabled) return;
+    if (choiceOne && card.id === choiceOne.id) return;
+    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
-  // 🔄 Compare cards
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
       if (choiceOne.src === choiceTwo.src) {
         setCards((prev) =>
-          prev.map((c) => (c.src === choiceOne.src ? { ...c, matched: true } : c))
+          prev.map((c) =>
+            c.src === choiceOne.src ? { ...c, matched: true } : c
+          )
         );
         resetTurn();
       } else {
@@ -77,141 +88,125 @@ export default function Game() {
     setDisabled(false);
   };
 
-  // ✅ Timer countdown + progress bar
   useEffect(() => {
-    if (!gameStarted || gameOver) return;
-
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setGameOver(true);
-      setFinalTime(40);
+    if (!gameOver) {
+      if (timeLeft > 0) {
+        const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+        return () => clearTimeout(timer);
+      } else {
+        setGameOver(true);
+        setFinalTime(40);
+      }
     }
-  }, [timeLeft, gameStarted, gameOver]);
+  }, [timeLeft, gameOver]);
 
-  // ✅ Check for game complete
   useEffect(() => {
     if (cards.length && cards.every((c) => c.matched)) {
       setGameOver(true);
-      setFinalTime(40 - timeLeft);
+      const elapsed = 40 - timeLeft;
+      setFinalTime(elapsed);
       setCelebrate(true);
     }
   }, [cards]);
 
-  // 💾 Save score
+  // 🔇 Silent score save (no alert)
   const handleSaveScore = async () => {
     if (scoreSaved) return;
-    setIsLoading(true);
     try {
       const resultData = { name: playerName, turns, time: finalTime };
       await axios.post(`${BASE_URL}/api/leaderboard`, resultData);
       localStorage.setItem("lastGameResult", JSON.stringify(resultData));
       setScoreSaved(true);
-      alert("✅ Score saved to leaderboard!");
     } catch (err) {
       console.error("❌ Error saving result:", err.response?.data || err.message);
-      alert("❌ Failed to save score.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const handleStartGame = () => {
-    setGameStarted(true);
-    shuffleCards();
-  };
-
-  // 🌀 Progress bar fill percentage
-  const progressPercent = ((40 - timeLeft) / 40) * 100;
-
-  // 🎉 Confetti animation
   const renderConfetti = () => {
     if (!celebrate) return null;
-    return Array.from({ length: 20 }).map((_, i) => (
-      <div
+    return Array.from({ length: 14 }).map((_, i) => (
+      <span
         key={i}
         className="confetti"
         style={{
           left: `${Math.random() * 100}%`,
-          backgroundColor: i % 2 ? "#ffd700" : "#fff",
-          animationDelay: `${Math.random()}s`,
+          top: `${Math.random() * 30}%`,
         }}
-      ></div>
+      />
     ));
   };
 
+  const formatTime = (t) => {
+    if (t === null || t === undefined) return "—";
+    const m = Math.floor(t / 60);
+    const s = t % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
   return (
-    <div className="game-container">
+    <div className="game-container dark-theme">
       {renderConfetti()}
 
-      {/* 🏁 Start Overlay */}
-      {!gameStarted && !gameOver && (
-        <div className="start-overlay">
-          <h2>🎮 Welcome, {playerName}!</h2>
-          <p>Are you ready to test your memory?</p>
-          <button onClick={handleStartGame}>Start Game</button>
+      <div className="game-header">
+        <div className="header-left">
+          <h2 className="title">Flip Frenzy</h2>
+          <p className="welcome">
+            Welcome, <span className="player-name">{playerName}</span>!
+          </p>
         </div>
-      )}
 
-      {/* 🌀 Loading Spinner */}
-      {isLoading && <div className="loading-spinner"></div>}
-
-      {/* Main Game Section */}
-      {gameStarted && !gameOver && (
-        <>
-          <div className="game-header">
-            <h2>Flip Frenzy</h2>
-            <p>Player: {playerName}</p>
-            <p>Turns: {turns}</p>
-            <p className={`timer ${timeLeft <= 10 ? "danger" : ""}`}>
-              Time Left: {timeLeft}s
-            </p>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${progressPercent}%` }}
-              ></div>
-            </div>
-            <div className="game-buttons">
-              <button className="btn" onClick={shuffleCards}>
-                🔁 Restart
-              </button>
-              <button className="btn exit-btn" onClick={() => navigate("/")}>
-                🚪 Exit
-              </button>
-            </div>
+        <div className="header-right">
+          <p className="turns">
+            Turns: <strong>{turns}</strong>
+          </p>
+          <p className={`timer ${timeLeft <= 10 ? "danger" : ""}`}>
+            ⏳ {timeLeft}s
+          </p>
+          <div className="controls">
+            <button className="btn small" onClick={shuffleCards}>
+              🔁 Restart
+            </button>
+            <button className="btn small exit" onClick={() => navigate("/")}>
+              🚪 Exit
+            </button>
+            <button className="btn small" onClick={() => navigate("/leaderboard")}>
+              🏆
+            </button>
           </div>
+        </div>
+      </div>
 
-          <div className="card-grid">
-            {cards.map((card) => (
-              <Card
-                key={card.id}
-                card={card}
-                handleChoice={handleChoice}
-                flipped={
-                  card.matched ||
-                  card.id === choiceOne?.id ||
-                  card.id === choiceTwo?.id
-                }
-                disabled={disabled}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* 🎮 Game Over Screen */}
-      {gameOver && (
+      {!gameOver ? (
+        <div className="card-grid">
+          {cards.map((card) => (
+            <Card
+              key={card.id}
+              card={card}
+              handleChoice={handleChoice}
+              flipped={
+                card.matched ||
+                card.id === choiceOne?.id ||
+                card.id === choiceTwo?.id
+              }
+              disabled={disabled}
+            />
+          ))}
+        </div>
+      ) : (
         <div className="game-over">
-          <h2>🎮 Game Over!</h2>
+          <h2>{cards.every((c) => c.matched) ? "🎉 You Won!" : "⏱ Time's Up"}</h2>
           {cards.every((c) => c.matched) ? (
             <p>
-              🎉 Awesome {playerName}! You finished in {turns} turns and{" "}
-              {finalTime}s!
+              Awesome <strong>{playerName}</strong> — finished in{" "}
+              <strong>{turns}</strong> turns and{" "}
+              <strong>{formatTime(finalTime)}</strong>!
             </p>
           ) : (
-            <p>⏱ Time’s up, {playerName}! Try again soon!</p>
+            <p>
+              Good try, <strong>{playerName}</strong>. Final turns:{" "}
+              <strong>{turns}</strong>. Time used:{" "}
+              <strong>{formatTime(finalTime)}</strong>.
+            </p>
           )}
 
           <div className="game-over-buttons">
@@ -221,7 +216,7 @@ export default function Game() {
             <button
               className="btn save-btn"
               onClick={handleSaveScore}
-              disabled={scoreSaved || isLoading}
+              disabled={scoreSaved}
             >
               💾 {scoreSaved ? "Saved!" : "Save Score"}
             </button>

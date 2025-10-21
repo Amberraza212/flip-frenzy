@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const resultSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    turns: { type: Number, required: true },
-  },
-  { timestamps: true }
-);
+const resultSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  turns: { type: Number, required: true },
+  time: { type: Number, required: false }, // ✅ added time field (in seconds)
+  createdAt: { type: Date, default: Date.now }, // optional timestamp
+});
 
-export default mongoose.model("Result", resultSchema);
+const Result = mongoose.model("Result", resultSchema);
+export default Result;
