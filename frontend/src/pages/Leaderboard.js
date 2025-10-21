@@ -6,7 +6,7 @@ const Leaderboard = () => {
   const navigate = useNavigate();
 
   // ✅ Backend URL (local for now)
-  const BASE_URL = "http://localhost:5004";
+  const BASE_URL = "https://flip-frenzy-lime.vercel.app/";
 
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);

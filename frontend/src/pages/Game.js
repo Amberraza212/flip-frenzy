@@ -33,7 +33,7 @@ export default function Game() {
   const [scoreSaved, setScoreSaved] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5004";
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL || "https://flip-frenzy-lime.vercel.app";
 
   // shuffle / start game
   const shuffleCards = () => {
