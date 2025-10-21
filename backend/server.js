@@ -10,14 +10,12 @@ const app = express();
 const PORT = process.env.PORT || 5004;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ✅ Proper CORS setup
+// ✅ Proper CORS setup including deployed frontend
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
-      "https://game-frontend-hazel.vercel.app",
-            "https://game-frontend-git-main-ambers-projects-2d8614a1.vercel.app"
- // your frontend on vercel
+      "http://localhost:3000", // local frontend
+      "https://flip-frenzy-4htz.vercel.app" // deployed frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
